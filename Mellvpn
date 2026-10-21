@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d17">
+<title>MellVPN — твой интернет</title>
+<style>
+:root{--bg:#080d17;--panel:#111b2b;--cyan:#35e4cd;--muted:#93a4ba}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#f4f8ff;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{height:76px;display:flex;align-items:center;gap:18px;
+padding:0 20px;border-bottom:1px solid #1e2b3d}
+button{font:inherit;cursor:pointer}
+.menu{background:none;border:0;color:white;font-size:27px;padding:5px}
+.logo{font-size:23px;font-weight:850;letter-spacing:-1px}
+.logo span{color:var(--cyan)}
+.beta{margin-left:auto;border:1px solid #245a5b;color:var(--cyan);
+border-radius:20px;padding:6px 10px;font-size:11px}
+main{max-width:460px;margin:auto;padding:28px 20px 45px}
+.eyebrow{color:var(--cyan);font-size:12px;letter-spacing:2px;
+text-transform:uppercase;text-align:center;margin-top:14px}
+h1{text-align:center;font-size:35px;letter-spacing:-1.5px;margin:13px 0}
+.sub{text-align:center;color:var(--muted);line-height:1.6;font-size:14px}
+.status{margin:30px auto 22px;background:var(--panel);border:1px solid #25364b;
+border-radius:20px;padding:25px 18px;text-align:center}
+.orb{width:105px;height:105px;margin:0 auto 19px;border-radius:50%;
+display:grid;place-items:center;background:#102c36;border:1px solid #236b69;
+box-shadow:0 0 38px #16cdb522}
+.orb svg{width:48px;height:48px;stroke:var(--cyan);fill:none;
+stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.state{font-size:18px;font-weight:750}
+.small{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.5}
+.primary,.secondary{width:100%;border-radius:13px;padding:16px;
+font-weight:750;margin-top:12px}
+.primary{border:0;background:var(--cyan);color:#071414}
+.secondary{background:#152235;color:white;border:1px solid #2b3b50}
+.section{margin-top:26px;background:var(--panel);border:1px solid #202f43;
+border-radius:17px;padding:18px}
+.section h3{margin:0 0 9px;font-size:16px}
+.section p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
+.tag{display:inline-block;color:var(--cyan);font-size:11px;
+background:#15302f;padding:5px 9px;border-radius:8px;margin-bottom:10px}
+footer{text-align:center;color:#64768e;font-size:11px;padding:12px 0 25px}
+.overlay{position:fixed;inset:0;background:#0009;z-index:5;display:none}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(310px,85vw);
+background:#0d1624;border-right:1px solid #293a4e;padding:24px;
+transform:translateX(-105%);transition:transform .22s;z-index:6}
+.drawer.open{transform:translateX(0)}
+.overlay.open{display:block}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;
+margin-bottom:28px}
+.close{background:none;border:0;color:white;font-size:25px}
+.nav{display:block;width:100%;text-align:left;padding:16px 12px;
+margin:5px 0;background:#131f30;border:1px solid #23354a;
+border-radius:12px;color:white;font-size:15px}
+.nav span{margin-right:10px}
+#modal{display:none;position:fixed;inset:0;z-index:10;background:#000b;
+align-items:center;justify-content:center;padding:22px}
+.dialog{width:100%;max-width:390px;background:#111c2c;
+border:1px solid #304259;border-radius:22px;padding:25px}
+.dialog h2{font-size:23px;margin:0 0 12px}
+.dialog p{color:#b2c0d1;line-height:1.65;font-size:14px}
+a{color:var(--cyan)}
+</style>
+</head>
+<body>
+<header>
+<button class="menu" onclick="menu(true)" aria-label="Открыть меню">☰</button>
+<div class="logo">Mell<span>VPN</span></div>
+<div class="beta">BETA</div>
+</header>
+
+<div class="overlay" id="overlay" onclick="menu(false)"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="logo">Mell<span>VPN</span></div>
+    <button class="close" onclick="menu(false)">×</button>
+  </div>
+  <button class="nav" onclick="showPage('home')"><span>⌂</span>Главная</button>
+  <button class="nav" onclick="showPage('servers')"><span>◎</span>Выбрать сервер</button>
+  <button class="nav" onclick="showPage('support')"><span>✉</span>Поддержка</button>
+  <button class="nav" onclick="showPage('purchases')"><span>▤</span>Покупки</button>
+  <button class="nav" onclick="showPage('domain')"><span>✦</span>Подарок покупателю</button>
+  <p class="small" style="margin-top:28px">MellVPN · Первая версия</p>
+</aside>
+
+<main id="page">
+  <div class="eyebrow">ТВОЙ ИНТЕРНЕТ. ТВОИ ПРАВИЛА.</div>
+  <h1>Интернет без<br>лишних границ.</h1>
+  <p class="sub">Простой интерфейс. Твоё подключение.<br>Мы готовим запуск MellVPN.</p>
+
+  <div class="status">
+    <div class="orb">
+      <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>
+    </div>
+    <div class="state" id="statusTitle">Ожидаем запуск</div>
+    <div class="small" id="statusText">Серверы пока не подключены</div>
+    <button class="primary" onclick="connect()">⏻ &nbsp; Подключиться</button>
+    <button class="secondary" onclick="showPage('servers')">◎ &nbsp; Выбрать сервер</button>
+  </div>
+
+  <div class="section">
+    <span class="tag">СКОРО</span>
+    <h3>🌐 Серверы MellVPN</h3>
+    <p>Сейчас список пуст. Как только появится первый сервер, мы добавим его сюда.</p>
+  </div>
+
+  <div class="section">
+    <h3>🎁 Особый подарок</h3>
+    <p>Первый покупатель сможет получить персональный адрес с уникальным именем, например <b>meow</b> или <b>kot1</b>. Условия и доступность домена подтвердим при запуске.</p>
+  </div>
+</main>
+
+<footer>© 2026 MellVPN · Тестовая версия</footer>
+
+<div id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="dialog">
+    <h2 id="modalTitle">MellVPN</h2>
+    <div id="modalBody"></div>
+    <button class="primary" onclick="closeModal()">Понятно</button>
+  </div>
+</div>
+
+<script>
+function menu(open){
+  document.getElementById('drawer').classList.toggle('open',open);
+  document.getElementById('overlay').classList.toggle('open',open);
+}
+function modal(title,body){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modal').style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+function connect(){
+  modal('Пока не подключиться 😿',
+  '<p>Привет! Серверов пока нет, но ради тебя могу купить российский — только ты уедь в Беларусь 😂</p><p>А если серьёзно: мы готовим первый сервер MellVPN. Попробуй позже!</p>');
+}
+function showPage(which){
+  menu(false);
+  const page=document.getElementById('page');
+  if(which==='home'){location.reload();return}
+  if(which==='servers'){
+    page.innerHTML='<div class="eyebrow">MELLVPN</div><h1>Выбрать сервер</h1><p class="sub">Пока серверов нет. Мы ещё выбираем первый сервер.</p><div class="section"><h3>🌍 Список серверов пуст</h3><p>Когда сервер будет готов, он появится здесь.</p></div><button class="secondary" onclick="showPage(\\'home\\')">← На главную</button>';
+  }
+  if(which==='support'){
+    page.innerHTML='<div class="eyebrow">МЫ НА СВЯЗИ</div><h1>Поддержка</h1><p class="sub">Есть вопрос? Напиши нам.</p><div class="section"><h3>✉ Электронная почта</h3><p><a href="mailto:mr.xamam@mail.ru">mr.xamam@mail.ru</a><br><a href="mailto:negrsmotrit@gmail.com">negrsmotrit@gmail.com</a></p></div><div class="section"><h3>✈ Telegram</h3><p><a href="https://t.me/Mellvpn_Base2026_Bot" target="_blank" rel="noopener">@Mellvpn_Base2026_Bot</a></p><p style="margin-top:10px">Ответы бота и поддержка ещё настраиваются.</p></div><button class="secondary" onclick="showPage(\\'home\\')">← На главную</button>';
+  }
+  if(which==='purchases'){
+    page.innerHTML='<div class="eyebrow">ТВОИ ПОКУПКИ</div><h1>Покупки</h1><div class="section" style="text-align:center;padding:35px 18px"><h3>🛍️ Здесь пока пусто</h3><p>Подписки и покупки появятся после запуска MellVPN. Оплата пока недоступна.</p></div><button class="secondary" onclick="showPage(\\'home\\')">← На главную</button>';
+  }
+  if(which==='domain'){
+    page.innerHTML='<div class="eyebrow">ПЕРВЫЙ ПОКУПАТЕЛЬ</div><h1>Твоё имя в сети</h1><div class="section"><h3>✦ Персональный адрес</h3><p>Например, <b>meow</b>, <b>kot1</b> или случайное уникальное слово. Сам домен и правила выдачи ещё предстоит настроить. Пока адрес не создан и не гарантирован.</p></div><button class="secondary" onclick="showPage(\\'home\\')">← На главную</button>';
+  }
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
